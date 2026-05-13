@@ -22,4 +22,13 @@ I'd reach for at work.
 
 ## Status
 
-Just getting started.
+Scaffolded with `create-next-app` (TypeScript, App Router, Tailwind).
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000). Edit `src/app/page.tsx` to change the home page.
