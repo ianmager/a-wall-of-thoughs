@@ -1,8 +1,17 @@
 @import "tailwindcss";
 
+/* Concrete “wall” theme — single cohesive look (no pure black flat dark mode). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --wall-base: #868c92;
+  --wall-mid: #959ca3;
+  --wall-highlight: #a8afb6;
+  --wall-shadow: rgba(15, 23, 42, 0.35);
+  --background: #8f959b;
+  --foreground: #1c1917;
+  --muted: rgba(28, 25, 23, 0.62);
+  --divider: rgba(28, 25, 23, 0.22);
+  --chrome-bg: rgba(28, 25, 23, 0.08);
+  --chrome-border: rgba(28, 25, 23, 0.35);
 }
 
 @theme inline {
@@ -10,17 +19,56 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-graffiti);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Fine noise overlay (SVG turbulence) for aggregate texture */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.22;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 180px 180px;
 }
 
 body {
-  background: var(--background);
+  position: relative;
+  z-index: 0;
+  min-height: 100vh;
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  background-color: var(--wall-base);
+  background-image:
+    linear-gradient(
+      168deg,
+      color-mix(in srgb, var(--wall-highlight) 55%, transparent) 0%,
+      transparent 48%
+    ),
+    linear-gradient(
+      322deg,
+      color-mix(in srgb, var(--wall-shadow) 28%, transparent) 0%,
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse 140% 90% at 50% -15%,
+      color-mix(in srgb, white 18%, var(--wall-mid)),
+      transparent 58%
+    ),
+    linear-gradient(to bottom, var(--wall-mid), var(--wall-base));
+  box-shadow: inset 0 0 140px color-mix(in srgb, black 32%, transparent);
+}
+
+.font-display {
+  font-family: var(--font-graffiti), ui-sans-serif, cursive;
+}
+
+/* Wall post rotation disabled when user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-wall-post] {
+    transform: none !important;
+  }
 }
