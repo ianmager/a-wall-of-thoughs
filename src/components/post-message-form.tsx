@@ -1,9 +1,10 @@
 "use client";
 
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import { postMessage, type PostMessageState } from "@/app/actions";
 
+const MAX_LENGTH = 500;
 const initialState: PostMessageState = {};
 
 const fieldClass =
@@ -14,10 +15,12 @@ const submitClass =
 
 export function PostMessageForm() {
   const [state, formAction, pending] = useActionState(postMessage, initialState);
+  const [body, setBody] = useState("");
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state?.success) {
+      setBody("");
       formRef.current?.reset();
     }
   }, [state]);
@@ -31,9 +34,11 @@ export function PostMessageForm() {
         id="wall-body"
         name="body"
         rows={3}
-        maxLength={500}
+        maxLength={MAX_LENGTH}
         required
         disabled={pending}
+        value={body}
+        onChange={(e) => setBody(e.target.value)}
         placeholder="Write something on the wall…"
         className={fieldClass}
       />
@@ -41,6 +46,12 @@ export function PostMessageForm() {
         <button type="submit" disabled={pending} className={submitClass}>
           {pending ? "Posting…" : "Post"}
         </button>
+        <p
+          className="text-xs font-semibold tabular-nums text-stone-800/70"
+          aria-live="polite"
+        >
+          {body.length} / {MAX_LENGTH}
+        </p>
       </div>
       {state?.error ? (
         <p
