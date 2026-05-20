@@ -1,6 +1,6 @@
+import { GraffitiWall } from "@/components/graffiti-wall";
 import { SignInWithGoogleButton, SignOutButton } from "@/components/google-auth-buttons";
 import { PostMessageForm } from "@/components/post-message-form";
-import { WallPostCard } from "@/components/wall-post-card";
 import { isAdminUser } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -77,7 +77,7 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
       </header>
 
-      <section className="flex flex-col gap-5" aria-labelledby="wall-heading">
+      <section className="flex flex-col gap-5 overflow-x-hidden" aria-labelledby="wall-heading">
         <h2
           id="wall-heading"
           className="font-display text-2xl lowercase tracking-wide text-stone-950"
@@ -97,17 +97,11 @@ export default async function Home({ searchParams }: HomeProps) {
             No messages yet — hit the wall first.
           </p>
         ) : (
-          <ul className="grid grid-cols-1 gap-x-8 gap-y-10 px-1 py-2 md:grid-cols-2 xl:grid-cols-3">
-            {wallMessages.map((m) => (
-              <WallPostCard
-                key={m.id}
-                id={m.id}
-                body={m.body}
-                createdLabel={formatWallTime(m.created_at)}
-                canDelete={canModerate}
-              />
-            ))}
-          </ul>
+          <GraffitiWall
+            messages={wallMessages}
+            canDelete={canModerate}
+            formatTime={formatWallTime}
+          />
         )}
       </section>
     </main>

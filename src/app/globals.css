@@ -66,9 +66,28 @@ body {
   font-family: var(--font-graffiti), ui-sans-serif, cursive;
 }
 
-/* Wall post rotation disabled when user prefers reduced motion */
+/* Scattered wall: keep placement, drop rotation when user prefers reduced motion */
 @media (prefers-reduced-motion: reduce) {
   [data-wall-post] {
     transform: none !important;
   }
+}
+
+/* Subtle mortar lines on the wall canvas */
+.wall-canvas {
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 49.5%,
+      color-mix(in srgb, var(--wall-shadow) 12%, transparent) 49.5%,
+      color-mix(in srgb, var(--wall-shadow) 12%, transparent) 50.5%,
+      transparent 50.5%
+    ),
+    linear-gradient(
+      transparent 49.5%,
+      color-mix(in srgb, var(--wall-shadow) 8%, transparent) 49.5%,
+      color-mix(in srgb, var(--wall-shadow) 8%, transparent) 50.5%,
+      transparent 50.5%
+    );
+  background-size: 120px 120px, 120px 120px;
 }
