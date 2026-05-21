@@ -5,7 +5,7 @@ import { isAdminUser } from "@/lib/admin";
 import { createClient } from "@/lib/supabase/server";
 
 type HomeProps = {
-  searchParams?: Promise<{ error?: string }>;
+  searchParams?: Promise<{ error?: string; tagged?: string }>;
 };
 
 type WallMessage = {
@@ -69,7 +69,7 @@ export default async function Home({ searchParams }: HomeProps) {
               <h2 className="font-display text-2xl lowercase tracking-wide text-stone-950">
                 Add a tag
               </h2>
-              <PostMessageForm />
+              <PostMessageForm showTagged={sp.tagged === "1"} />
             </div>
           ) : (
             <p className="text-sm text-stone-800/85">Not signed in.</p>

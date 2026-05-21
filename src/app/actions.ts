@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { isAdminUser } from "@/lib/admin";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
@@ -11,7 +12,6 @@ const UUID_RE =
 
 export type PostMessageState = {
   error?: string;
-  success?: boolean;
 };
 
 export async function postMessage(
@@ -45,7 +45,7 @@ export async function postMessage(
   }
 
   revalidatePath("/");
-  return { success: true };
+  redirect("/?tagged=1");
 }
 
 export type DeleteMessageState = {
