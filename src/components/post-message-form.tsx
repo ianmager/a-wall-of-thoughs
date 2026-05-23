@@ -1,9 +1,9 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useActionState, useRef, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 
 import { postMessage, type PostMessageState } from "@/app/actions";
+import type { WallMessage } from "@/lib/wall-message";
 
 const MAX_LENGTH = 500;
 const initialState: PostMessageState = {};
@@ -19,14 +19,26 @@ const submitClass = `${actionChipClass} border-stone-900/45 bg-stone-950 upperca
 const taggedClass = `${actionChipClass} border-emerald-800/45 bg-emerald-100/95 font-display lowercase text-emerald-950`;
 
 type PostMessageFormProps = {
-  showTagged?: boolean;
+  onPostSuccess?: (message: WallMessage) => void;
 };
 
-export function PostMessageForm({ showTagged = false }: PostMessageFormProps) {
-  const router = useRouter();
+export function PostMessageForm({ onPostSuccess }: PostMessageFormProps) {
   const [state, formAction, pending] = useActionState(postMessage, initialState);
   const [body, setBody] = useState("");
+  const [showTagged, setShowTagged] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    if (state?.success && state.message) {
+      setBody("");
+      formRef.current?.reset();
+      setShowTagged(true);
+      onPostSuccess?.(state.message);
+    }
+    if (state?.error) {
+      setShowTagged(false);
+    }
+  }, [state, onPostSuccess]);
 
   return (
     <form ref={formRef} action={formAction} className="flex flex-col gap-3">
@@ -43,9 +55,7 @@ export function PostMessageForm({ showTagged = false }: PostMessageFormProps) {
         value={body}
         onChange={(e) => {
           setBody(e.target.value);
-          if (window.location.search.includes("tagged=1")) {
-            router.replace("/", { scroll: false });
-          }
+          setShowTagged(false);
         }}
         placeholder="Write something on the wall…"
         className={fieldClass}

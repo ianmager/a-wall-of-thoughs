@@ -1,9 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
 import { isAdminUser } from "@/lib/admin";
+import type { WallMessage } from "@/lib/wall-message";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -12,6 +12,8 @@ const UUID_RE =
 
 export type PostMessageState = {
   error?: string;
+  success?: boolean;
+  message?: WallMessage;
 };
 
 export async function postMessage(
@@ -35,17 +37,20 @@ export async function postMessage(
     return { error: "You must be signed in to post." };
   }
 
-  const { error } = await supabase.from("messages").insert({
-    body,
-    user_id: user.id,
-  });
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
+      body,
+      user_id: user.id,
+    })
+    .select("id, body, created_at")
+    .single();
 
   if (error) {
     return { error: error.message };
   }
 
-  revalidatePath("/");
-  redirect("/?tagged=1");
+  return { success: true, message: data as WallMessage };
 }
 
 export type DeleteMessageState = {

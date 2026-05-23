@@ -1,25 +1,16 @@
+import { ConnectedPostMessageForm } from "@/components/connected-post-message-form";
 import { GraffitiWall } from "@/components/graffiti-wall";
 import { SignInWithGoogleButton, SignOutButton } from "@/components/google-auth-buttons";
-import { PostMessageForm } from "@/components/post-message-form";
+import { WallFeed } from "@/components/wall-feed";
+import { WallMessagesProvider } from "@/components/wall-messages-provider";
 import { isAdminUser } from "@/lib/admin";
+import { formatWallTime } from "@/lib/format-wall-time";
+import type { WallMessage } from "@/lib/wall-message";
 import { createClient } from "@/lib/supabase/server";
 
 type HomeProps = {
-  searchParams?: Promise<{ error?: string; tagged?: string }>;
+  searchParams?: Promise<{ error?: string }>;
 };
-
-type WallMessage = {
-  id: string;
-  body: string;
-  created_at: string;
-};
-
-function formatWallTime(iso: string) {
-  return new Date(iso).toLocaleString(undefined, {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-}
 
 export default async function Home({ searchParams }: HomeProps) {
   const sp = (await searchParams) ?? {};
@@ -36,8 +27,19 @@ export default async function Home({ searchParams }: HomeProps) {
 
   const wallMessages = (messages ?? []) as WallMessage[];
   const canModerate = isAdminUser(user);
+  const messagesErrorMessage = messagesError?.message ?? null;
 
-  return (
+  const wallSection = user ? (
+    <WallFeed canDelete={canModerate} messagesError={messagesErrorMessage} />
+  ) : (
+    <WallSectionStatic
+      messages={wallMessages}
+      canDelete={canModerate}
+      messagesError={messagesErrorMessage}
+    />
+  );
+
+  const content = (
     <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col gap-8 overflow-x-hidden px-4 py-10 pb-20 sm:px-8 lg:px-12">
       <header className="flex flex-col gap-6 border-b border-dashed border-stone-900/30 pb-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
@@ -69,7 +71,7 @@ export default async function Home({ searchParams }: HomeProps) {
               <h2 className="font-display text-2xl lowercase tracking-wide text-stone-950">
                 Add a tag
               </h2>
-              <PostMessageForm showTagged={sp.tagged === "1"} />
+              <ConnectedPostMessageForm />
             </div>
           ) : (
             <p className="text-sm text-stone-800/85">Not signed in.</p>
@@ -84,26 +86,48 @@ export default async function Home({ searchParams }: HomeProps) {
         >
           Wall
         </h2>
-        {messagesError ? (
-          <p
-            className="rounded-sm border-2 border-red-800/35 bg-red-100/90 px-3 py-2 text-sm font-medium text-red-950"
-            role="alert"
-          >
-            Could not load messages ({messagesError.message}). If you just cloned the repo, run
-            the SQL migration in Supabase.
-          </p>
-        ) : wallMessages.length === 0 ? (
-          <p className="font-display text-lg lowercase tracking-wide text-stone-800/75">
-            No messages yet — hit the wall first.
-          </p>
-        ) : (
-          <GraffitiWall
-            messages={wallMessages}
-            canDelete={canModerate}
-            formatTime={formatWallTime}
-          />
-        )}
+        {wallSection}
       </section>
     </main>
+  );
+
+  if (user) {
+    return (
+      <WallMessagesProvider initialMessages={wallMessages}>{content}</WallMessagesProvider>
+    );
+  }
+
+  return content;
+}
+
+type WallSectionStaticProps = {
+  messages: WallMessage[];
+  canDelete: boolean;
+  messagesError: string | null;
+};
+
+function WallSectionStatic({ messages, canDelete, messagesError }: WallSectionStaticProps) {
+  if (messagesError) {
+    return (
+      <p
+        className="rounded-sm border-2 border-red-800/35 bg-red-100/90 px-3 py-2 text-sm font-medium text-red-950"
+        role="alert"
+      >
+        Could not load messages ({messagesError}). If you just cloned the repo, run the SQL
+        migration in Supabase.
+      </p>
+    );
+  }
+
+  if (messages.length === 0) {
+    return (
+      <p className="font-display text-lg lowercase tracking-wide text-stone-800/75">
+        No messages yet — hit the wall first.
+      </p>
+    );
+  }
+
+  return (
+    <GraffitiWall messages={messages} canDelete={canDelete} formatTime={formatWallTime} />
   );
 }
