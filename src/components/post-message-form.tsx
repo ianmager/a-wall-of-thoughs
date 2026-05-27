@@ -3,7 +3,8 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 
 import { postMessage, type PostMessageState } from "@/app/actions";
-import type { WallMessage } from "@/lib/wall-message";
+import { TagStyleControls } from "@/components/tag-placement-picker";
+import { useWallMessages } from "@/components/wall-messages-provider";
 
 const MAX_LENGTH = 500;
 const initialState: PostMessageState = {};
@@ -18,30 +19,38 @@ const submitClass = `${actionChipClass} border-stone-900/45 bg-stone-950 upperca
 
 const taggedClass = `${actionChipClass} border-emerald-800/45 bg-emerald-100/95 font-display lowercase text-emerald-950`;
 
-type PostMessageFormProps = {
-  onPostSuccess?: (message: WallMessage) => void;
-};
-
-export function PostMessageForm({ onPostSuccess }: PostMessageFormProps) {
+export function PostMessageForm() {
+  const {
+    draft,
+    setBody,
+    setRotateDeg,
+    setColorKey,
+    setFontSize,
+    setMaxWidthRem,
+    resetDraft,
+    appendMessage,
+  } = useWallMessages();
   const [state, formAction, pending] = useActionState(postMessage, initialState);
-  const [body, setBody] = useState("");
   const [showTagged, setShowTagged] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
     if (state?.success && state.message) {
-      setBody("");
       formRef.current?.reset();
       setShowTagged(true);
-      onPostSuccess?.(state.message);
+      appendMessage(state.message);
+      resetDraft();
     }
     if (state?.error) {
       setShowTagged(false);
     }
-  }, [state, onPostSuccess]);
+  }, [state, appendMessage, resetDraft]);
+
+  const trimmedBody = draft.body.trim();
+  const canSubmit = !pending && trimmedBody.length > 0 && draft.hasPlaced;
 
   return (
-    <form ref={formRef} action={formAction} className="flex flex-col gap-3">
+    <form ref={formRef} action={formAction} className="flex flex-col gap-4">
       <label htmlFor="wall-body" className="sr-only">
         Message
       </label>
@@ -52,7 +61,7 @@ export function PostMessageForm({ onPostSuccess }: PostMessageFormProps) {
         maxLength={MAX_LENGTH}
         required
         disabled={pending}
-        value={body}
+        value={draft.body}
         onChange={(e) => {
           setBody(e.target.value);
           setShowTagged(false);
@@ -60,9 +69,58 @@ export function PostMessageForm({ onPostSuccess }: PostMessageFormProps) {
         placeholder="Write something on the wall…"
         className={fieldClass}
       />
+
+      <TagStyleControls
+        rotateDeg={draft.rotateDeg}
+        colorKey={draft.colorKey}
+        fontSize={draft.fontSize}
+        maxWidthRem={draft.maxWidthRem}
+        previewText={draft.body}
+        disabled={pending}
+        onRotateChange={(deg) => {
+          setRotateDeg(deg);
+          setShowTagged(false);
+        }}
+        onColorChange={(key) => {
+          setColorKey(key);
+          setShowTagged(false);
+        }}
+        onFontSizeChange={(size) => {
+          setFontSize(size);
+          setShowTagged(false);
+        }}
+        onMaxWidthChange={(rem) => {
+          setMaxWidthRem(rem);
+          setShowTagged(false);
+        }}
+      />
+
+      <p
+        className="text-xs font-medium text-stone-800/80"
+        role="status"
+        aria-live="polite"
+      >
+        {draft.hasPlaced
+          ? `Tag placed at ${Math.round(draft.posX)}, ${Math.round(draft.posY)} — Post when ready.`
+          : "Click the wall below to place your tag, then Post."}
+      </p>
+
+      <input type="hidden" name="pos_x" value={draft.posX} />
+      <input type="hidden" name="pos_y" value={draft.posY} />
+      <input type="hidden" name="rotate_deg" value={draft.rotateDeg} />
+      <input type="hidden" name="color_key" value={draft.colorKey} />
+      <input type="hidden" name="font_size" value={draft.fontSize} />
+      <input type="hidden" name="max_width_rem" value={draft.maxWidthRem} />
+      <input type="hidden" name="placement_set" value={draft.hasPlaced ? "1" : ""} />
+
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <button type="submit" disabled={pending} className={submitClass}>
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            aria-disabled={!canSubmit}
+            className={submitClass}
+          >
             {pending ? "Posting…" : "Post"}
           </button>
           {showTagged ? (
@@ -75,7 +133,7 @@ export function PostMessageForm({ onPostSuccess }: PostMessageFormProps) {
           className="text-xs font-semibold tabular-nums text-stone-800/70"
           aria-live="polite"
         >
-          {body.length} / {MAX_LENGTH}
+          {draft.body.length} / {MAX_LENGTH}
         </p>
       </div>
       {state?.error ? (

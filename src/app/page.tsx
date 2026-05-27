@@ -1,11 +1,11 @@
-import { ConnectedPostMessageForm } from "@/components/connected-post-message-form";
+import { ComposerSection } from "@/components/composer-section";
 import { GraffitiWall } from "@/components/graffiti-wall";
 import { SignInWithGoogleButton, SignOutButton } from "@/components/google-auth-buttons";
 import { WallFeed } from "@/components/wall-feed";
 import { WallMessagesProvider } from "@/components/wall-messages-provider";
 import { isAdminUser } from "@/lib/admin";
 import { formatWallTime } from "@/lib/format-wall-time";
-import type { WallMessage } from "@/lib/wall-message";
+import { WALL_MESSAGE_COLUMNS, type WallMessage } from "@/lib/wall-message";
 import { createClient } from "@/lib/supabase/server";
 
 type HomeProps = {
@@ -21,7 +21,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   const { data: messages, error: messagesError } = await supabase
     .from("messages")
-    .select("id, body, created_at")
+    .select(WALL_MESSAGE_COLUMNS)
     .is("deleted_at", null)
     .order("created_at", { ascending: true });
 
@@ -48,7 +48,9 @@ export default async function Home({ searchParams }: HomeProps) {
               a-wall-of-thoughts
             </h1>
             <p className="text-sm font-medium text-stone-800/90">
-              Public wall, oldest posts first. Sign in to add a message.
+              {user
+                ? "Public wall, oldest posts first. Click anywhere on the wall to add a tag."
+                : "Public wall, oldest posts first. Sign in to add a message."}
             </p>
             {sp.error === "auth" ? (
               <p
@@ -65,18 +67,13 @@ export default async function Home({ searchParams }: HomeProps) {
           </div>
         </div>
 
-        <div className="rounded-sm border border-stone-900/20 bg-stone-950/5 p-4 sm:p-5">
-          {user ? (
-            <div className="flex flex-col gap-3">
-              <h2 className="font-display text-2xl lowercase tracking-wide text-stone-950">
-                Add a tag
-              </h2>
-              <ConnectedPostMessageForm />
-            </div>
-          ) : (
+        {user ? (
+          <ComposerSection />
+        ) : (
+          <div className="rounded-sm border border-stone-900/20 bg-stone-950/5 p-4 sm:p-5">
             <p className="text-sm text-stone-800/85">Not signed in.</p>
-          )}
-        </div>
+          </div>
+        )}
       </header>
 
       <section className="flex flex-col gap-5 overflow-x-hidden" aria-labelledby="wall-heading">

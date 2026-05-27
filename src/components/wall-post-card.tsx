@@ -1,15 +1,15 @@
 import type { CSSProperties } from "react";
 
 import { DeleteMessageForm } from "@/components/delete-message-form";
+import type { WallMessage } from "@/lib/wall-message";
 import {
-  getPostScatterPlacement,
-  getPostTagTextClass,
+  resolvePostPlacement,
+  resolvePostTextClass,
   type PostScatterPlacement,
 } from "@/lib/wall-post-style";
 
 type Props = {
-  id: string;
-  body: string;
+  message: WallMessage;
   createdLabel: string;
   canDelete?: boolean;
   index: number;
@@ -17,21 +17,20 @@ type Props = {
 };
 
 export function WallPostCard({
-  id,
-  body,
+  message,
   createdLabel,
   canDelete = false,
   index,
   messageCount,
 }: Props) {
-  const placement = getPostScatterPlacement(id, index, messageCount);
-  const textClass = getPostTagTextClass(id);
+  const placement = resolvePostPlacement(message, index, messageCount);
+  const textClass = resolvePostTextClass(message);
   const { rotateDeg } = placement;
 
   return (
     <li
       data-wall-post
-      className="absolute max-w-[min(92vw,20rem)] transition-[z-index]"
+      className="pointer-events-none absolute max-w-[min(92vw,20rem)] transition-[z-index]"
       style={positionStyle(placement)}
     >
       <div
@@ -39,17 +38,17 @@ export function WallPostCard({
         className="relative inline-flex max-w-full origin-top-left items-end gap-2 rounded-sm border-2 border-transparent p-1 transition-[border-color,background-color]"
         style={{ transform: `rotate(${rotateDeg}deg)` }}
       >
-        <div className="min-w-0">
-          <p className={`whitespace-pre-wrap break-words ${textClass}`}>{body}</p>
+        <div className="min-w-0" style={{ maxWidth: `${placement.maxWidthRem}rem` }}>
+          <p className={`whitespace-pre-wrap break-words ${textClass}`}>{message.body}</p>
           <p className="sr-only">{createdLabel}</p>
         </div>
         {canDelete ? (
           <div
             data-wall-post-delete
-            className="relative z-10 shrink-0 self-start"
+            className="pointer-events-auto relative z-10 shrink-0 self-start"
             style={counterRotateStyle(rotateDeg)}
           >
-            <DeleteMessageForm messageId={id} />
+            <DeleteMessageForm messageId={message.id} />
           </div>
         ) : null}
       </div>

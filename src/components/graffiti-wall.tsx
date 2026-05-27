@@ -1,21 +1,24 @@
+import type { ReactNode } from "react";
+
 import { WallPostCard } from "@/components/wall-post-card";
 import { getWallCanvasMinHeightPx } from "@/lib/wall-post-style";
+import type { WallMessage } from "@/lib/wall-message";
 
-export type GraffitiWallMessage = {
-  id: string;
-  body: string;
-  created_at: string;
-};
+const PLACEMENT_MIN_HEIGHT_PX = 480;
 
 type Props = {
-  messages: GraffitiWallMessage[];
+  messages: WallMessage[];
   canDelete: boolean;
   formatTime: (iso: string) => string;
+  overlay?: ReactNode;
 };
 
-export function GraffitiWall({ messages, canDelete, formatTime }: Props) {
+export function GraffitiWall({ messages, canDelete, formatTime, overlay }: Props) {
   const count = messages.length;
-  const minHeight = getWallCanvasMinHeightPx(count);
+  const computed = getWallCanvasMinHeightPx(messages);
+  const minHeight = overlay
+    ? Math.max(computed, PLACEMENT_MIN_HEIGHT_PX)
+    : computed;
 
   return (
     <ul
@@ -26,14 +29,18 @@ export function GraffitiWall({ messages, canDelete, formatTime }: Props) {
       {messages.map((m, index) => (
         <WallPostCard
           key={m.id}
-          id={m.id}
-          body={m.body}
+          message={m}
           createdLabel={formatTime(m.created_at)}
           canDelete={canDelete}
           index={index}
           messageCount={count}
         />
       ))}
+      {overlay ? (
+        <li role="presentation" className="contents">
+          {overlay}
+        </li>
+      ) : null}
     </ul>
   );
 }

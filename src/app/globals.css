@@ -89,6 +89,13 @@ body {
   }
 }
 
+/* Spray-can cursor while a signed-in user is placing a tag on the wall.
+   Hotspot near the nozzle tip; fallback to crosshair. */
+.cursor-spray-can,
+.cursor-spray-can * {
+  cursor: url("/cursors/spray-can.svg") 6 6, crosshair;
+}
+
 /* Subtle mortar lines on the wall canvas */
 .wall-canvas {
   background-image:

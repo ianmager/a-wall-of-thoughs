@@ -2,6 +2,7 @@
 
 import { GraffitiWall } from "@/components/graffiti-wall";
 import { useWallMessages } from "@/components/wall-messages-provider";
+import { WallPlacementOverlay } from "@/components/wall-placement-overlay";
 import { formatWallTime } from "@/lib/format-wall-time";
 
 type WallFeedProps = {
@@ -24,19 +25,12 @@ export function WallFeed({ canDelete, messagesError }: WallFeedProps) {
     );
   }
 
-  if (messages.length === 0) {
-    return (
-      <p className="font-display text-lg lowercase tracking-wide text-stone-800/75">
-        No messages yet — hit the wall first.
-      </p>
-    );
-  }
-
   return (
     <GraffitiWall
       messages={messages}
       canDelete={canDelete}
       formatTime={formatWallTime}
+      overlay={<WallPlacementOverlay />}
     />
   );
 }
