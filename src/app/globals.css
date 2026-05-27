@@ -66,9 +66,25 @@ body {
   font-family: var(--font-graffiti), ui-sans-serif, cursive;
 }
 
+/* Admin: highlight tag text when hovering/focusing its delete control */
+[data-wall-post]:has([data-wall-post-delete]:hover),
+[data-wall-post]:has([data-wall-post-delete]:focus-within) {
+  z-index: 999 !important;
+}
+
+[data-wall-post-tag]:has([data-wall-post-delete]:hover),
+[data-wall-post-tag]:has([data-wall-post-delete]:focus-within) {
+  border-color: color-mix(in srgb, rgb(153 27 27) 45%, transparent);
+  background-color: color-mix(in srgb, rgb(69 10 10) 10%, transparent);
+}
+
 /* Scattered wall: keep placement, drop rotation when user prefers reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  [data-wall-post] {
+  [data-wall-post-tag] {
+    transform: none !important;
+  }
+
+  [data-wall-post-tag] [data-wall-post-delete] {
     transform: none !important;
   }
 }

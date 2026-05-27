@@ -14,7 +14,7 @@ export function DeleteMessageForm({ messageId }: Props) {
   const [state, formAction, pending] = useActionState(deleteMessage, initialState);
 
   return (
-    <form action={formAction} className="mt-2 flex flex-col items-end gap-1">
+    <form action={formAction} className="flex flex-col items-end gap-1">
       <input type="hidden" name="id" value={messageId} />
       <button
         type="submit"

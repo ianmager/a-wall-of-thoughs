@@ -26,30 +26,50 @@ export function WallPostCard({
 }: Props) {
   const placement = getPostScatterPlacement(id, index, messageCount);
   const textClass = getPostTagTextClass(id);
+  const { rotateDeg } = placement;
 
   return (
     <li
       data-wall-post
-      className="absolute max-w-[min(92vw,20rem)]"
-      style={scatterStyle(placement)}
+      className="absolute max-w-[min(92vw,20rem)] transition-[z-index]"
+      style={positionStyle(placement)}
     >
-      <p className={`whitespace-pre-wrap break-words ${textClass}`}>{body}</p>
-      <p className="sr-only">{createdLabel}</p>
-      {canDelete ? (
-        <div className="mt-2 rounded-sm bg-stone-950/10 p-1 backdrop-blur-[2px]">
-          <DeleteMessageForm messageId={id} />
+      <div
+        data-wall-post-tag
+        className="relative inline-flex max-w-full origin-top-left items-end gap-2 rounded-sm border-2 border-transparent p-1 transition-[border-color,background-color]"
+        style={{ transform: `rotate(${rotateDeg}deg)` }}
+      >
+        <div className="min-w-0">
+          <p className={`whitespace-pre-wrap break-words ${textClass}`}>{body}</p>
+          <p className="sr-only">{createdLabel}</p>
         </div>
-      ) : null}
+        {canDelete ? (
+          <div
+            data-wall-post-delete
+            className="relative z-10 shrink-0 self-start"
+            style={counterRotateStyle(rotateDeg)}
+          >
+            <DeleteMessageForm messageId={id} />
+          </div>
+        ) : null}
+      </div>
     </li>
   );
 }
 
-function scatterStyle(p: PostScatterPlacement): CSSProperties {
+function positionStyle(p: PostScatterPlacement): CSSProperties {
   return {
     left: `${p.leftPercent}%`,
     top: `${p.topPercent}%`,
     zIndex: p.zIndex,
     maxWidth: `${p.maxWidthRem}rem`,
-    transform: `rotate(${p.rotateDeg}deg)`,
+  };
+}
+
+/** Keep the delete control level on screen while the tag text stays tilted. */
+function counterRotateStyle(rotateDeg: number): CSSProperties {
+  return {
+    transform: `rotate(${-rotateDeg}deg)`,
+    transformOrigin: "top left",
   };
 }
