@@ -1,14 +1,20 @@
 "use client";
 
-import { ConnectedPostMessageForm } from "@/components/connected-post-message-form";
-import { useWallMessages } from "@/components/wall-messages-provider";
+import dynamic from "next/dynamic";
+
+import { useTagDraft } from "@/components/wall-messages-provider";
+
+const PostMessageForm = dynamic(
+  () => import("@/components/post-message-form").then((m) => m.PostMessageForm),
+  { ssr: false },
+);
 
 /**
  * Renders the "Add a tag" composer only once the user has clicked the wall.
  * Before that, signed-in users see nothing here so the wall stays uncluttered.
  */
 export function ComposerSection() {
-  const { draft, resetDraft } = useWallMessages();
+  const { draft, resetDraft } = useTagDraft();
 
   if (!draft.hasPlaced) {
     return null;
@@ -29,7 +35,7 @@ export function ComposerSection() {
             Cancel
           </button>
         </div>
-        <ConnectedPostMessageForm />
+        <PostMessageForm />
       </div>
     </div>
   );

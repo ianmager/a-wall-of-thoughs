@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { memo, type CSSProperties } from "react";
 
 import { DeleteMessageForm } from "@/components/delete-message-form";
 import type { WallMessage } from "@/lib/wall-message";
@@ -16,7 +16,7 @@ type Props = {
   messageCount: number;
 };
 
-export function WallPostCard({
+function WallPostCardInner({
   message,
   createdLabel,
   canDelete = false,
@@ -72,3 +72,5 @@ function counterRotateStyle(rotateDeg: number): CSSProperties {
     transformOrigin: "top left",
   };
 }
+
+export const WallPostCard = memo(WallPostCardInner);

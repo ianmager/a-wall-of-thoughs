@@ -2,6 +2,7 @@ import { ComposerSection } from "@/components/composer-section";
 import { GraffitiWall } from "@/components/graffiti-wall";
 import { SignInWithGoogleButton, SignOutButton } from "@/components/google-auth-buttons";
 import { WallFeed } from "@/components/wall-feed";
+import { WallMessagesError } from "@/components/wall-messages-error";
 import { WallMessagesProvider } from "@/components/wall-messages-provider";
 import { isAdminUser } from "@/lib/admin";
 import { formatWallTime } from "@/lib/format-wall-time";
@@ -105,15 +106,7 @@ type WallSectionStaticProps = {
 
 function WallSectionStatic({ messages, canDelete, messagesError }: WallSectionStaticProps) {
   if (messagesError) {
-    return (
-      <p
-        className="rounded-sm border-2 border-red-800/35 bg-red-100/90 px-3 py-2 text-sm font-medium text-red-950"
-        role="alert"
-      >
-        Could not load messages ({messagesError}). If you just cloned the repo, run the SQL
-        migration in Supabase.
-      </p>
-    );
+    return <WallMessagesError message={messagesError} />;
   }
 
   if (messages.length === 0) {

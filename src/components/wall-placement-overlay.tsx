@@ -2,12 +2,12 @@
 
 import { useCallback, useRef, type PointerEvent } from "react";
 
-import { useWallMessages } from "@/components/wall-messages-provider";
+import { useTagDraft } from "@/components/wall-messages-provider";
 import { pointerToWallPercent } from "@/lib/tag-placement";
 import { TAG_COLOR_CLASSES, fontSizeToClass } from "@/lib/tag-style";
 
 export function WallPlacementOverlay() {
-  const { draft, setPlacement } = useWallMessages();
+  const { draft, setPlacement } = useTagDraft();
   const surfaceRef = useRef<HTMLDivElement>(null);
 
   const updateFromPointer = useCallback(
@@ -46,8 +46,6 @@ export function WallPlacementOverlay() {
 
   return (
     <>
-      {/* Click-capture surface sits behind post cards so delete buttons
-          (which opt back into pointer events) receive their own clicks. */}
       <div
         ref={surfaceRef}
         role="button"

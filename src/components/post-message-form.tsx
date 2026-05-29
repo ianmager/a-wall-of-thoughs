@@ -3,8 +3,8 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 
 import { postMessage, type PostMessageState } from "@/app/actions";
-import { TagStyleControls } from "@/components/tag-placement-picker";
-import { useWallMessages } from "@/components/wall-messages-provider";
+import { TagStyleControls } from "@/components/tag-style-controls";
+import { useTagDraft, useWallMessages } from "@/components/wall-messages-provider";
 
 const MAX_LENGTH = 500;
 const initialState: PostMessageState = {};
@@ -20,6 +20,7 @@ const submitClass = `${actionChipClass} border-stone-900/45 bg-stone-950 upperca
 const taggedClass = `${actionChipClass} border-emerald-800/45 bg-emerald-100/95 font-display lowercase text-emerald-950`;
 
 export function PostMessageForm() {
+  const { appendMessage } = useWallMessages();
   const {
     draft,
     setBody,
@@ -28,8 +29,7 @@ export function PostMessageForm() {
     setFontSize,
     setMaxWidthRem,
     resetDraft,
-    appendMessage,
-  } = useWallMessages();
+  } = useTagDraft();
   const [state, formAction, pending] = useActionState(postMessage, initialState);
   const [showTagged, setShowTagged] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);

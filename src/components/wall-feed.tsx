@@ -1,9 +1,13 @@
 "use client";
 
-import { GraffitiWall } from "@/components/graffiti-wall";
+import { useMemo } from "react";
+
+import { GraffitiWall, PLACEMENT_MIN_HEIGHT_PX } from "@/components/graffiti-wall";
+import { WallMessagesError } from "@/components/wall-messages-error";
 import { useWallMessages } from "@/components/wall-messages-provider";
 import { WallPlacementOverlay } from "@/components/wall-placement-overlay";
 import { formatWallTime } from "@/lib/format-wall-time";
+import { getWallCanvasMinHeightPx } from "@/lib/wall-post-style";
 
 type WallFeedProps = {
   canDelete: boolean;
@@ -13,16 +17,13 @@ type WallFeedProps = {
 export function WallFeed({ canDelete, messagesError }: WallFeedProps) {
   const { messages } = useWallMessages();
 
+  const minHeightPx = useMemo(() => {
+    const computed = getWallCanvasMinHeightPx(messages);
+    return Math.max(computed, PLACEMENT_MIN_HEIGHT_PX);
+  }, [messages]);
+
   if (messagesError) {
-    return (
-      <p
-        className="rounded-sm border-2 border-red-800/35 bg-red-100/90 px-3 py-2 text-sm font-medium text-red-950"
-        role="alert"
-      >
-        Could not load messages ({messagesError}). If you just cloned the repo, run the SQL
-        migration in Supabase.
-      </p>
-    );
+    return <WallMessagesError message={messagesError} />;
   }
 
   return (
@@ -30,6 +31,7 @@ export function WallFeed({ canDelete, messagesError }: WallFeedProps) {
       messages={messages}
       canDelete={canDelete}
       formatTime={formatWallTime}
+      minHeightPx={minHeightPx}
       overlay={<WallPlacementOverlay />}
     />
   );

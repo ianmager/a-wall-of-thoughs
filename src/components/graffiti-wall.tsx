@@ -4,21 +4,31 @@ import { WallPostCard } from "@/components/wall-post-card";
 import { getWallCanvasMinHeightPx } from "@/lib/wall-post-style";
 import type { WallMessage } from "@/lib/wall-message";
 
-const PLACEMENT_MIN_HEIGHT_PX = 480;
+export const PLACEMENT_MIN_HEIGHT_PX = 480;
 
 type Props = {
   messages: WallMessage[];
   canDelete: boolean;
   formatTime: (iso: string) => string;
   overlay?: ReactNode;
+  /** Precomputed canvas height (avoids duplicate work in client parents). */
+  minHeightPx?: number;
 };
 
-export function GraffitiWall({ messages, canDelete, formatTime, overlay }: Props) {
+export function GraffitiWall({
+  messages,
+  canDelete,
+  formatTime,
+  overlay,
+  minHeightPx: minHeightPxProp,
+}: Props) {
   const count = messages.length;
-  const computed = getWallCanvasMinHeightPx(messages);
-  const minHeight = overlay
-    ? Math.max(computed, PLACEMENT_MIN_HEIGHT_PX)
-    : computed;
+  const minHeight =
+    minHeightPxProp ??
+    (() => {
+      const computed = getWallCanvasMinHeightPx(messages);
+      return overlay ? Math.max(computed, PLACEMENT_MIN_HEIGHT_PX) : computed;
+    })();
 
   return (
     <ul

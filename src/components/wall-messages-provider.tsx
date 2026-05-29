@@ -45,6 +45,9 @@ const INITIAL_DRAFT: TagDraft = {
 type WallMessagesContextValue = {
   messages: WallMessage[];
   appendMessage: (message: WallMessage) => void;
+};
+
+type TagDraftContextValue = {
   draft: TagDraft;
   setBody: (text: string) => void;
   setPlacement: (x: number, y: number) => void;
@@ -56,6 +59,7 @@ type WallMessagesContextValue = {
 };
 
 const WallMessagesContext = createContext<WallMessagesContextValue | null>(null);
+const TagDraftContext = createContext<TagDraftContextValue | null>(null);
 
 type WallMessagesProviderProps = {
   initialMessages: WallMessage[];
@@ -110,10 +114,13 @@ export function WallMessagesProvider({
     setDraft(INITIAL_DRAFT);
   }, []);
 
-  const value = useMemo(
+  const messagesValue = useMemo(
+    () => ({ messages, appendMessage }),
+    [messages, appendMessage],
+  );
+
+  const draftValue = useMemo(
     () => ({
-      messages,
-      appendMessage,
       draft,
       setBody,
       setPlacement,
@@ -124,8 +131,6 @@ export function WallMessagesProvider({
       resetDraft,
     }),
     [
-      messages,
-      appendMessage,
       draft,
       setBody,
       setPlacement,
@@ -138,7 +143,9 @@ export function WallMessagesProvider({
   );
 
   return (
-    <WallMessagesContext.Provider value={value}>{children}</WallMessagesContext.Provider>
+    <WallMessagesContext.Provider value={messagesValue}>
+      <TagDraftContext.Provider value={draftValue}>{children}</TagDraftContext.Provider>
+    </WallMessagesContext.Provider>
   );
 }
 
@@ -146,6 +153,14 @@ export function useWallMessages() {
   const ctx = useContext(WallMessagesContext);
   if (!ctx) {
     throw new Error("useWallMessages must be used within WallMessagesProvider");
+  }
+  return ctx;
+}
+
+export function useTagDraft() {
+  const ctx = useContext(TagDraftContext);
+  if (!ctx) {
+    throw new Error("useTagDraft must be used within WallMessagesProvider");
   }
   return ctx;
 }
