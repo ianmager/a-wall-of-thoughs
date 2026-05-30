@@ -50,25 +50,38 @@ export function PostMessageForm() {
   const canSubmit = !pending && trimmedBody.length > 0 && draft.hasPlaced;
 
   return (
-    <form ref={formRef} action={formAction} className="flex flex-col gap-4">
-      <label htmlFor="wall-body" className="sr-only">
-        Message
-      </label>
-      <textarea
-        id="wall-body"
-        name="body"
-        rows={3}
-        maxLength={MAX_LENGTH}
-        required
-        disabled={pending}
-        value={draft.body}
-        onChange={(e) => {
-          setBody(e.target.value);
-          setShowTagged(false);
-        }}
-        placeholder="Write something on the wall…"
-        className={fieldClass}
-      />
+    <form ref={formRef} action={formAction} className="flex flex-col gap-5">
+      <div className="flex flex-col gap-1.5">
+        <div className="flex items-baseline justify-between">
+          <label
+            htmlFor="wall-body"
+            className="text-xs font-semibold uppercase tracking-wider text-stone-700"
+          >
+            Your message
+          </label>
+          <span
+            className="text-[11px] font-semibold tabular-nums text-stone-600"
+            aria-live="polite"
+          >
+            {draft.body.length} / {MAX_LENGTH}
+          </span>
+        </div>
+        <textarea
+          id="wall-body"
+          name="body"
+          rows={3}
+          maxLength={MAX_LENGTH}
+          required
+          disabled={pending}
+          value={draft.body}
+          onChange={(e) => {
+            setBody(e.target.value);
+            setShowTagged(false);
+          }}
+          placeholder="Write something on the wall…"
+          className={fieldClass}
+        />
+      </div>
 
       <TagStyleControls
         rotateDeg={draft.rotateDeg}
@@ -95,16 +108,6 @@ export function PostMessageForm() {
         }}
       />
 
-      <p
-        className="text-xs font-medium text-stone-800/80"
-        role="status"
-        aria-live="polite"
-      >
-        {draft.hasPlaced
-          ? `Tag placed at ${Math.round(draft.posX)}, ${Math.round(draft.posY)} — Post when ready.`
-          : "Click the wall below to place your tag, then Post."}
-      </p>
-
       <input type="hidden" name="pos_x" value={draft.posX} />
       <input type="hidden" name="pos_y" value={draft.posY} />
       <input type="hidden" name="rotate_deg" value={draft.rotateDeg} />
@@ -113,29 +116,6 @@ export function PostMessageForm() {
       <input type="hidden" name="max_width_rem" value={draft.maxWidthRem} />
       <input type="hidden" name="placement_set" value={draft.hasPlaced ? "1" : ""} />
 
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            aria-disabled={!canSubmit}
-            className={submitClass}
-          >
-            {pending ? "Posting…" : "Post"}
-          </button>
-          {showTagged ? (
-            <span className={taggedClass} role="status" aria-live="polite">
-              Tagged!
-            </span>
-          ) : null}
-        </div>
-        <p
-          className="text-xs font-semibold tabular-nums text-stone-800/70"
-          aria-live="polite"
-        >
-          {draft.body.length} / {MAX_LENGTH}
-        </p>
-      </div>
       {state?.error ? (
         <p
           className="rounded-sm border-2 border-red-800/35 bg-red-100/90 px-3 py-2 text-sm font-medium text-red-950"
@@ -144,6 +124,27 @@ export function PostMessageForm() {
           {state.error}
         </p>
       ) : null}
+
+      <div className="flex items-center justify-between gap-3 border-t border-dashed border-stone-900/20 pt-4">
+        <p className="text-xs font-medium text-stone-600">
+          Tap the wall again to move your tag.
+        </p>
+        <div className="flex items-center gap-2">
+          {showTagged ? (
+            <span className={taggedClass} role="status" aria-live="polite">
+              Tagged!
+            </span>
+          ) : null}
+          <button
+            type="submit"
+            disabled={!canSubmit}
+            aria-disabled={!canSubmit}
+            className={submitClass}
+          >
+            {pending ? "Posting…" : "Post"}
+          </button>
+        </div>
+      </div>
     </form>
   );
 }

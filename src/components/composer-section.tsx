@@ -21,16 +21,22 @@ export function ComposerSection() {
   }
 
   return (
-    <div className="rounded-sm border border-stone-900/20 bg-stone-950/5 p-4 sm:p-5">
-      <div className="flex flex-col gap-3">
-        <div className="flex items-center justify-between gap-3">
-          <h2 className="font-display text-2xl lowercase tracking-wide text-stone-950">
-            Add a tag
-          </h2>
+    <div className="rounded-md border border-stone-900/20 bg-stone-100/40 p-4 shadow-[0_1px_0_rgba(255,255,255,0.3)_inset] sm:p-6">
+      <div className="flex flex-col gap-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex flex-col gap-0.5">
+            <h2 className="font-display text-2xl lowercase tracking-wide text-stone-950">
+              Add your tag
+            </h2>
+            <p className="text-xs font-medium text-stone-600">
+              Write it, style it, then post it to the wall.
+            </p>
+          </div>
           <button
             type="button"
             onClick={resetDraft}
-            className="text-xs font-bold uppercase tracking-wider text-stone-700 transition-colors hover:text-stone-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900"
+            aria-label="Cancel adding a tag"
+            className="-mr-1 -mt-1 rounded-md px-2 py-1 text-xs font-bold uppercase tracking-wider text-stone-600 transition-colors hover:bg-stone-900/10 hover:text-stone-950 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-stone-900"
           >
             Cancel
           </button>
