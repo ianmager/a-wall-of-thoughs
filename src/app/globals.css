@@ -96,21 +96,3 @@ body {
   cursor: url("/cursors/spray-can.svg") 6 6, crosshair;
 }
 
-/* Subtle mortar lines on the wall canvas */
-.wall-canvas {
-  background-image:
-    linear-gradient(
-      90deg,
-      transparent 49.5%,
-      color-mix(in srgb, var(--wall-shadow) 12%, transparent) 49.5%,
-      color-mix(in srgb, var(--wall-shadow) 12%, transparent) 50.5%,
-      transparent 50.5%
-    ),
-    linear-gradient(
-      transparent 49.5%,
-      color-mix(in srgb, var(--wall-shadow) 8%, transparent) 49.5%,
-      color-mix(in srgb, var(--wall-shadow) 8%, transparent) 50.5%,
-      transparent 50.5%
-    );
-  background-size: 120px 120px, 120px 120px;
-}

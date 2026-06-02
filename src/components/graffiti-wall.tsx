@@ -32,7 +32,7 @@ export function GraffitiWall({
 
   return (
     <ul
-      className="wall-canvas relative mx-auto w-full max-w-6xl list-none px-2 pb-8"
+      className="wall-canvas relative w-full list-none pb-8"
       style={{ minHeight: minHeight > 0 ? `${minHeight}px` : undefined }}
       aria-label="Message wall"
     >

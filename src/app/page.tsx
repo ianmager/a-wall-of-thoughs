@@ -41,7 +41,8 @@ export default async function Home({ searchParams }: HomeProps) {
   );
 
   const content = (
-    <main className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col gap-8 overflow-x-hidden px-4 py-10 pb-20 sm:px-8 lg:px-12">
+    <main className="relative z-10 flex min-h-screen flex-col gap-8 overflow-x-hidden">
+      <div className="mx-auto w-full max-w-7xl px-4 pt-10 sm:px-8 lg:px-12">
       <header className="flex flex-col gap-6 border-b border-dashed border-stone-900/30 pb-8">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div className="min-w-0 flex-1 flex flex-col gap-3">
@@ -76,11 +77,12 @@ export default async function Home({ searchParams }: HomeProps) {
           </div>
         )}
       </header>
+      </div>
 
-      <section className="flex flex-col gap-5 overflow-x-hidden" aria-labelledby="wall-heading">
+      <section className="flex w-full flex-col gap-5 pb-20" aria-labelledby="wall-heading">
         <h2
           id="wall-heading"
-          className="font-display text-2xl lowercase tracking-wide text-stone-950"
+          className="mx-auto w-full max-w-7xl px-4 font-display text-2xl lowercase tracking-wide text-stone-950 sm:px-8 lg:px-12"
         >
           Wall
         </h2>
@@ -111,7 +113,7 @@ function WallSectionStatic({ messages, canDelete, messagesError }: WallSectionSt
 
   if (messages.length === 0) {
     return (
-      <p className="font-display text-lg lowercase tracking-wide text-stone-800/75">
+      <p className="mx-auto w-full max-w-7xl px-4 font-display text-lg lowercase tracking-wide text-stone-800/75 sm:px-8 lg:px-12">
         No messages yet — hit the wall first.
       </p>
     );

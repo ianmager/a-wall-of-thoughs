@@ -30,7 +30,7 @@ function WallPostCardInner({
   return (
     <li
       data-wall-post
-      className="pointer-events-none absolute max-w-[min(92vw,20rem)] transition-[z-index]"
+      className="pointer-events-none absolute transition-[z-index]"
       style={positionStyle(placement)}
     >
       <div
