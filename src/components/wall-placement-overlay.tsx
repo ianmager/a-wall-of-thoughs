@@ -2,12 +2,13 @@
 
 import { useCallback, useRef, type PointerEvent } from "react";
 
+import { TagDraftBox } from "@/components/tag-draft-box";
 import { useTagDraft } from "@/components/wall-messages-provider";
 import { pointerToWallPercent } from "@/lib/tag-placement";
 import { TAG_COLOR_CLASSES, fontSizeToClass } from "@/lib/tag-style";
 
 export function WallPlacementOverlay() {
-  const { draft, setPlacement } = useTagDraft();
+  const { draft, setPlacement, setRotateDeg, setMaxWidthRem } = useTagDraft();
   const surfaceRef = useRef<HTMLDivElement>(null);
 
   const updateFromPointer = useCallback(
@@ -41,7 +42,6 @@ export function WallPlacementOverlay() {
     [updateFromPointer],
   );
 
-  const previewLabel = draft.body.trim() || "your tag";
   const sizeClass = fontSizeToClass(draft.fontSize);
 
   return (
@@ -56,27 +56,25 @@ export function WallPlacementOverlay() {
         className="cursor-spray-can absolute inset-0 z-0 touch-none select-none"
       />
       {draft.hasPlaced ? (
-        <span
-          aria-hidden
-          className="pointer-events-none absolute z-[600] origin-center"
+        <div
+          className="pointer-events-none absolute z-[600]"
           style={{
             left: `${draft.posX}%`,
             top: `${draft.posY}%`,
-            maxWidth: `${draft.maxWidthRem}rem`,
-            transform: `translate(-50%, -50%) rotate(${draft.rotateDeg}deg)`,
+            transform: "translate(-50%, -50%)",
           }}
         >
-          <span
-            className={`font-display ${sizeClass} leading-tight tracking-wide drop-shadow-sm ${TAG_COLOR_CLASSES[draft.colorKey]}`}
-            style={{
-              display: "inline-block",
-              whiteSpace: "pre-wrap",
-              wordBreak: "break-word",
-            }}
-          >
-            {previewLabel}
-          </span>
-        </span>
+          <TagDraftBox
+            text={draft.body}
+            sizeClass={sizeClass}
+            colorClass={TAG_COLOR_CLASSES[draft.colorKey]}
+            rotateDeg={draft.rotateDeg}
+            maxWidthRem={draft.maxWidthRem}
+            chromeMode="always"
+            onRotateChange={setRotateDeg}
+            onMaxWidthChange={setMaxWidthRem}
+          />
+        </div>
       ) : null}
     </>
   );

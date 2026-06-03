@@ -1,17 +1,12 @@
 "use client";
 
-import { useId } from "react";
-
+import { TagComposerPreview } from "@/components/tag-composer-preview";
 import {
   TAG_COLOR_CLASSES,
   TAG_COLOR_KEYS,
   TAG_COLOR_SWATCH,
   TAG_FONT_SIZE_MAX,
   TAG_FONT_SIZE_MIN,
-  TAG_MAX_WIDTH_REM_MAX,
-  TAG_MAX_WIDTH_REM_MIN,
-  TAG_ROTATE_MAX,
-  TAG_ROTATE_MIN,
   fontSizeToClass,
   type TagColorKey,
 } from "@/lib/tag-style";
@@ -45,28 +40,20 @@ export function TagStyleControls({
   onFontSizeChange,
   onMaxWidthChange,
 }: TagStyleControlsProps) {
-  const widthInputId = useId();
-  const rotateInputId = useId();
-  const previewLabel = previewText.trim() || "your tag";
   const sizeClass = fontSizeToClass(fontSize);
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex min-h-28 items-center justify-center overflow-hidden rounded-md border-2 border-dashed border-stone-900/20 bg-stone-200/40 p-4">
-        <span
-          aria-hidden
-          className={`font-display ${sizeClass} leading-tight tracking-wide drop-shadow-sm ${TAG_COLOR_CLASSES[colorKey]}`}
-          style={{
-            display: "inline-block",
-            maxWidth: `${maxWidthRem}rem`,
-            whiteSpace: "pre-wrap",
-            wordBreak: "break-word",
-            transform: `rotate(${rotateDeg}deg)`,
-          }}
-        >
-          {previewLabel}
-        </span>
-      </div>
+      <TagComposerPreview
+        text={previewText}
+        sizeClass={sizeClass}
+        colorClass={TAG_COLOR_CLASSES[colorKey]}
+        rotateDeg={rotateDeg}
+        maxWidthRem={maxWidthRem}
+        disabled={disabled}
+        onRotateChange={onRotateChange}
+        onMaxWidthChange={onMaxWidthChange}
+      />
 
       <fieldset className="flex flex-col gap-2">
         <legend className={rowLabelClass}>Color</legend>
@@ -117,50 +104,6 @@ export function TagStyleControls({
           })}
         </div>
       </fieldset>
-
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <label htmlFor={widthInputId} className={rowLabelClass}>
-            Width
-          </label>
-          <span className="font-mono text-[11px] tabular-nums text-stone-600">
-            {Math.round(maxWidthRem)} rem
-          </span>
-        </div>
-        <input
-          id={widthInputId}
-          type="range"
-          min={TAG_MAX_WIDTH_REM_MIN}
-          max={TAG_MAX_WIDTH_REM_MAX}
-          step={1}
-          value={maxWidthRem}
-          disabled={disabled}
-          onChange={(e) => onMaxWidthChange(Number(e.target.value))}
-          className="w-full accent-stone-900 disabled:opacity-50"
-        />
-      </div>
-
-      <div className="flex flex-col gap-1.5">
-        <div className="flex items-center justify-between">
-          <label htmlFor={rotateInputId} className={rowLabelClass}>
-            Angle
-          </label>
-          <span className="font-mono text-[11px] tabular-nums text-stone-600">
-            {Math.round(rotateDeg)}&deg;
-          </span>
-        </div>
-        <input
-          id={rotateInputId}
-          type="range"
-          min={TAG_ROTATE_MIN}
-          max={TAG_ROTATE_MAX}
-          step={1}
-          value={rotateDeg}
-          disabled={disabled}
-          onChange={(e) => onRotateChange(Number(e.target.value))}
-          className="w-full accent-stone-900 disabled:opacity-50"
-        />
-      </div>
     </div>
   );
 }
