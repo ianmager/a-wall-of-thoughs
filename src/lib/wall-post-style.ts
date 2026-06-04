@@ -13,7 +13,7 @@ import {
 } from "@/lib/tag-style";
 import type { WallMessage } from "@/lib/wall-message";
 
-export function hashStringToUint(str: string): number {
+function hashStringToUint(str: string): number {
   let h = 2166136261;
   for (let i = 0; i < str.length; i++) {
     h ^= str.charCodeAt(i);
@@ -38,7 +38,7 @@ function hashMaxWidthRem(id: string): number {
 }
 
 /** Deterministic tilt; neutralized via CSS when prefers-reduced-motion */
-export function getPostRotationDeg(id: string): number {
+function getPostRotationDeg(id: string): number {
   const h = hashStringToUint(`${id}:rotate`);
   const t = (h % 1000) / 1000;
   return -8 + t * 16;

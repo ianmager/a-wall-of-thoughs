@@ -23,12 +23,7 @@ export function GraffitiWall({
   minHeightPx: minHeightPxProp,
 }: Props) {
   const count = messages.length;
-  const minHeight =
-    minHeightPxProp ??
-    (() => {
-      const computed = getWallCanvasMinHeightPx(messages);
-      return overlay ? Math.max(computed, PLACEMENT_MIN_HEIGHT_PX) : computed;
-    })();
+  const minHeight = minHeightPxProp ?? computeMinHeight(messages, Boolean(overlay));
 
   return (
     <ul
@@ -53,4 +48,9 @@ export function GraffitiWall({
       ) : null}
     </ul>
   );
+}
+
+function computeMinHeight(messages: WallMessage[], hasOverlay: boolean): number {
+  const computed = getWallCanvasMinHeightPx(messages);
+  return hasOverlay ? Math.max(computed, PLACEMENT_MIN_HEIGHT_PX) : computed;
 }

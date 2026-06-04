@@ -9,7 +9,7 @@ function roundTo(n: number, decimals: number): number {
   return Math.round(n * m) / m;
 }
 
-export type WallPercent = { x: number; y: number };
+type WallPercent = { x: number; y: number };
 
 /**
  * Convert a pointer location to wall coordinates as percentages of the

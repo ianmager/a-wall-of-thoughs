@@ -273,43 +273,29 @@ export function TagDraftBox({
         <span aria-hidden className={rotateDotClass} />
       </button>
 
-      <button
-        type="button"
-        disabled={disabled}
-        aria-label="Resize tag from left edge"
-        role="slider"
-        aria-valuemin={TAG_MAX_WIDTH_REM_MIN}
-        aria-valuemax={TAG_MAX_WIDTH_REM_MAX}
-        aria-valuenow={Math.round(maxWidthRem)}
-        aria-valuetext={`${Math.round(maxWidthRem)} rem wide`}
-        onPointerDown={handleResizePointerDown("w")}
-        onPointerMove={handleResizePointerMove("w")}
-        onPointerUp={handleResizePointerUp}
-        onPointerCancel={handleResizePointerUp}
-        onKeyDown={handleResizeKey("w")}
-        className={`${handleHitClass} ${visibleClass} left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-ew-resize`}
-      >
-        <span aria-hidden className={dotClass} />
-      </button>
-
-      <button
-        type="button"
-        disabled={disabled}
-        aria-label="Resize tag from right edge"
-        role="slider"
-        aria-valuemin={TAG_MAX_WIDTH_REM_MIN}
-        aria-valuemax={TAG_MAX_WIDTH_REM_MAX}
-        aria-valuenow={Math.round(maxWidthRem)}
-        aria-valuetext={`${Math.round(maxWidthRem)} rem wide`}
-        onPointerDown={handleResizePointerDown("e")}
-        onPointerMove={handleResizePointerMove("e")}
-        onPointerUp={handleResizePointerUp}
-        onPointerCancel={handleResizePointerUp}
-        onKeyDown={handleResizeKey("e")}
-        className={`${handleHitClass} ${visibleClass} right-0 top-1/2 translate-x-1/2 -translate-y-1/2 cursor-ew-resize`}
-      >
-        <span aria-hidden className={dotClass} />
-      </button>
+      {(["w", "e"] as const).map((side) => (
+        <button
+          key={side}
+          type="button"
+          disabled={disabled}
+          aria-label={`Resize tag from ${side === "w" ? "left" : "right"} edge`}
+          role="slider"
+          aria-valuemin={TAG_MAX_WIDTH_REM_MIN}
+          aria-valuemax={TAG_MAX_WIDTH_REM_MAX}
+          aria-valuenow={Math.round(maxWidthRem)}
+          aria-valuetext={`${Math.round(maxWidthRem)} rem wide`}
+          onPointerDown={handleResizePointerDown(side)}
+          onPointerMove={handleResizePointerMove(side)}
+          onPointerUp={handleResizePointerUp}
+          onPointerCancel={handleResizePointerUp}
+          onKeyDown={handleResizeKey(side)}
+          className={`${handleHitClass} ${visibleClass} top-1/2 -translate-y-1/2 cursor-ew-resize ${
+            side === "w" ? "left-0 -translate-x-1/2" : "right-0 translate-x-1/2"
+          }`}
+        >
+          <span aria-hidden className={dotClass} />
+        </button>
+      ))}
     </div>
   );
 }
