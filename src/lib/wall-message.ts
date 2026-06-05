@@ -12,3 +12,6 @@ export type WallMessage = {
 
 export const WALL_MESSAGE_COLUMNS =
   "id, body, created_at, pos_x, pos_y, rotate_deg, color_key, font_size, max_width_rem";
+
+/** Mirrors the `messages_body_length` CHECK constraint in the DB migration. */
+export const MAX_BODY_LENGTH = 500;

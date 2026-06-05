@@ -4,7 +4,11 @@ import { revalidatePath } from "next/cache";
 
 import { isAdminUser } from "@/lib/admin";
 import { parseTagStyleFromFormData } from "@/lib/tag-style";
-import { WALL_MESSAGE_COLUMNS, type WallMessage } from "@/lib/wall-message";
+import {
+  MAX_BODY_LENGTH,
+  WALL_MESSAGE_COLUMNS,
+  type WallMessage,
+} from "@/lib/wall-message";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
@@ -27,8 +31,8 @@ export async function postMessage(
     if (!body) {
       return { error: "Message cannot be empty." };
     }
-    if (body.length > 500) {
-      return { error: "Message is too long (max 500 characters)." };
+    if (body.length > MAX_BODY_LENGTH) {
+      return { error: `Message is too long (max ${MAX_BODY_LENGTH} characters).` };
     }
 
     const style = parseTagStyleFromFormData(formData);
@@ -66,31 +70,7 @@ export async function postMessage(
       return { error: "Could not save the tag. Try again." };
     }
 
-    const row = data as {
-      id: string;
-      body: string;
-      created_at: string;
-      pos_x: number | null;
-      pos_y: number | null;
-      rotate_deg: number | null;
-      color_key: string | null;
-      font_size: number | null;
-      max_width_rem: number | null;
-    };
-
-    const message: WallMessage = {
-      id: row.id,
-      body: row.body,
-      created_at: row.created_at,
-      pos_x: row.pos_x,
-      pos_y: row.pos_y,
-      rotate_deg: row.rotate_deg,
-      color_key: row.color_key,
-      font_size: row.font_size,
-      max_width_rem: row.max_width_rem,
-    };
-
-    return { success: true, message };
+    return { success: true, message: data as WallMessage };
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Could not post the tag.";
     return { error: msg };

@@ -5,8 +5,8 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { postMessage, type PostMessageState } from "@/app/actions";
 import { TagStyleControls } from "@/components/tag-style-controls";
 import { useTagDraft, useWallMessages } from "@/components/wall-messages-provider";
+import { MAX_BODY_LENGTH } from "@/lib/wall-message";
 
-const MAX_LENGTH = 500;
 const initialState: PostMessageState = {};
 
 const fieldClass =
@@ -63,14 +63,14 @@ export function PostMessageForm() {
             className="text-[11px] font-semibold tabular-nums text-stone-600"
             aria-live="polite"
           >
-            {draft.body.length} / {MAX_LENGTH}
+            {draft.body.length} / {MAX_BODY_LENGTH}
           </span>
         </div>
         <textarea
           id="wall-body"
           name="body"
           rows={3}
-          maxLength={MAX_LENGTH}
+          maxLength={MAX_BODY_LENGTH}
           required
           disabled={pending}
           value={draft.body}
