@@ -53,7 +53,7 @@ export default async function Home({ searchParams }: HomeProps) {
               </h1>
               <p className="text-sm font-medium text-stone-800/90">
                 {user
-                  ? "Public wall, oldest posts first. Click anywhere on the wall to add a tag."
+                  ? "Click the wall. Write your thoughts."
                   : "Public wall, oldest posts first. Sign in to add a message."}
               </p>
               {sp.error === "auth" ? (
