@@ -17,6 +17,7 @@ import {
 } from "@/lib/tag-style";
 import {
   clampWidthRem,
+  getRootFontSizePx,
   pointerAngleDeg,
   projectDeltaOntoLocalX,
   pxToRem,
@@ -28,6 +29,7 @@ type ResizeStart = {
   clientX: number;
   clientY: number;
   startWidthRem: number;
+  rootFontSizePx: number;
 };
 
 export type TagDraftBoxChrome = "always" | "controlled";
@@ -133,6 +135,7 @@ export function TagDraftBox({
           clientX: event.clientX,
           clientY: event.clientY,
           startWidthRem: maxWidthRem,
+          rootFontSizePx: getRootFontSizePx(),
         };
         setDragMode(side === "e" ? "resize-e" : "resize-w");
       },
@@ -151,7 +154,7 @@ export function TagDraftBox({
         // The box grows symmetrically from its center; multiply by 2 so the
         // dragged edge tracks the cursor.
         const directionalDelta = side === "e" ? localDx : -localDx;
-        const nextWidth = start.startWidthRem + pxToRem(directionalDelta) * 2;
+        const nextWidth = start.startWidthRem + pxToRem(directionalDelta, start.rootFontSizePx) * 2;
         onMaxWidthChange(clampWidthRem(nextWidth));
       },
     [onMaxWidthChange, rotateDeg],

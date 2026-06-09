@@ -14,6 +14,8 @@ type WallFeedProps = {
   messagesError: string | null;
 };
 
+const wallOverlay = <WallPlacementOverlay />;
+
 export function WallFeed({ canDelete, messagesError }: WallFeedProps) {
   const { messages } = useWallMessages();
 
@@ -32,7 +34,7 @@ export function WallFeed({ canDelete, messagesError }: WallFeedProps) {
       canDelete={canDelete}
       formatTime={formatWallTime}
       minHeightPx={minHeightPx}
-      overlay={<WallPlacementOverlay />}
+      overlay={wallOverlay}
     />
   );
 }

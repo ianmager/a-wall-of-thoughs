@@ -1,12 +1,20 @@
-import { memo, type CSSProperties } from "react";
+"use client";
 
-import { DeleteMessageForm } from "@/components/delete-message-form";
+import dynamic from "next/dynamic";
+import { memo, useMemo, type CSSProperties } from "react";
+
 import type { WallMessage } from "@/lib/wall-message";
 import {
+  hasUserTagStyle,
   resolvePostPlacement,
   resolvePostTextClass,
   type PostScatterPlacement,
 } from "@/lib/wall-post-style";
+
+const DeleteMessageForm = dynamic(
+  () => import("@/components/delete-message-form").then((m) => m.DeleteMessageForm),
+  { ssr: false },
+);
 
 type Props = {
   message: WallMessage;
@@ -23,8 +31,11 @@ function WallPostCardInner({
   index,
   messageCount,
 }: Props) {
-  const placement = resolvePostPlacement(message, index, messageCount);
-  const textClass = resolvePostTextClass(message);
+  const placement = useMemo(
+    () => resolvePostPlacement(message, index, messageCount),
+    [message, index, messageCount],
+  );
+  const textClass = useMemo(() => resolvePostTextClass(message), [message]);
   const { rotateDeg } = placement;
 
   return (
@@ -73,4 +84,18 @@ function counterRotateStyle(rotateDeg: number): CSSProperties {
   };
 }
 
-export const WallPostCard = memo(WallPostCardInner);
+function propsAreEqual(prev: Props, next: Props): boolean {
+  if (prev.message !== next.message) return false;
+  if (prev.canDelete !== next.canDelete) return false;
+  if (prev.createdLabel !== next.createdLabel) return false;
+  if (prev.index !== next.index) return false;
+  if (
+    !hasUserTagStyle(prev.message) &&
+    prev.messageCount !== next.messageCount
+  ) {
+    return false;
+  }
+  return true;
+}
+
+export const WallPostCard = memo(WallPostCardInner, propsAreEqual);

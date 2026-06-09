@@ -52,14 +52,18 @@ export function projectDeltaOntoLocalX(
   return deltaX * Math.cos(rad) + deltaY * Math.sin(rad);
 }
 
+/** Read the document root font size once (e.g. at drag start). */
+export function getRootFontSizePx(): number {
+  if (typeof window === "undefined") return DEFAULT_ROOT_FONT_SIZE_PX;
+  return (
+    parseFloat(getComputedStyle(document.documentElement).fontSize) ||
+    DEFAULT_ROOT_FONT_SIZE_PX
+  );
+}
+
 /** Convert a CSS pixel value to rem using the document root font size. */
 export function pxToRem(px: number, rootFontSizePx?: number): number {
-  const base =
-    rootFontSizePx ??
-    (typeof window !== "undefined"
-      ? parseFloat(getComputedStyle(document.documentElement).fontSize) ||
-        DEFAULT_ROOT_FONT_SIZE_PX
-      : DEFAULT_ROOT_FONT_SIZE_PX);
+  const base = rootFontSizePx ?? getRootFontSizePx();
   return px / base;
 }
 

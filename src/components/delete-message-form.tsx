@@ -1,8 +1,9 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 
 import { deleteMessage, type DeleteMessageState } from "@/app/actions";
+import { useWallMessages } from "@/components/wall-messages-provider";
 
 const initialState: DeleteMessageState = {};
 
@@ -11,7 +12,14 @@ type Props = {
 };
 
 export function DeleteMessageForm({ messageId }: Props) {
+  const { removeMessage } = useWallMessages();
   const [state, formAction, pending] = useActionState(deleteMessage, initialState);
+
+  useEffect(() => {
+    if (state?.success) {
+      removeMessage(messageId);
+    }
+  }, [state?.success, messageId, removeMessage]);
 
   return (
     <form action={formAction} className="flex flex-col items-end gap-1">

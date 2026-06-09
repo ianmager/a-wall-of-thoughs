@@ -1,7 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
-
 import { isAdminUser } from "@/lib/admin";
 import { parseTagStyleFromFormData } from "@/lib/tag-style";
 import {
@@ -125,6 +123,5 @@ export async function deleteMessage(
     return { error: "Message not found or already removed." };
   }
 
-  revalidatePath("/");
   return { success: true };
 }

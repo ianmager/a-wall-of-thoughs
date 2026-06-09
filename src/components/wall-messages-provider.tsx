@@ -45,6 +45,7 @@ const INITIAL_DRAFT: TagDraft = {
 type WallMessagesContextValue = {
   messages: WallMessage[];
   appendMessage: (message: WallMessage) => void;
+  removeMessage: (id: string) => void;
 };
 
 type TagDraftContextValue = {
@@ -74,7 +75,15 @@ export function WallMessagesProvider({
   const [draft, setDraft] = useState<TagDraft>(INITIAL_DRAFT);
 
   useEffect(() => {
-    setMessages(initialMessages);
+    setMessages((prev) => {
+      if (
+        prev.length === initialMessages.length &&
+        prev.every((m, i) => m.id === initialMessages[i]?.id)
+      ) {
+        return prev;
+      }
+      return initialMessages;
+    });
   }, [initialMessages]);
 
   const appendMessage = useCallback((message: WallMessage) => {
@@ -83,6 +92,13 @@ export function WallMessagesProvider({
         return prev;
       }
       return [...prev, message];
+    });
+  }, []);
+
+  const removeMessage = useCallback((id: string) => {
+    setMessages((prev) => {
+      const next = prev.filter((m) => m.id !== id);
+      return next.length === prev.length ? prev : next;
     });
   }, []);
 
@@ -115,8 +131,8 @@ export function WallMessagesProvider({
   }, []);
 
   const messagesValue = useMemo(
-    () => ({ messages, appendMessage }),
-    [messages, appendMessage],
+    () => ({ messages, appendMessage, removeMessage }),
+    [messages, appendMessage, removeMessage],
   );
 
   const draftValue = useMemo(

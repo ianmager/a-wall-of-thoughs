@@ -8,10 +8,6 @@
   --wall-shadow: rgba(15, 23, 42, 0.35);
   --background: #8f959b;
   --foreground: #1c1917;
-  --muted: rgba(28, 25, 23, 0.62);
-  --divider: rgba(28, 25, 23, 0.22);
-  --chrome-bg: rgba(28, 25, 23, 0.08);
-  --chrome-border: rgba(28, 25, 23, 0.35);
 }
 
 @theme inline {

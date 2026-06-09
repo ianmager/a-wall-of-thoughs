@@ -74,7 +74,8 @@ export function getPostScatterPlacement(
   };
 }
 
-function hasUserTagStyle(message: WallMessage): boolean {
+/** True when placement comes from user-chosen fields, not hash scatter. */
+export function hasUserTagStyle(message: WallMessage): boolean {
   return (
     message.pos_x !== null &&
     message.pos_y !== null &&
